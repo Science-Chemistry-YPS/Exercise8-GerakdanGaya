@@ -18,6 +18,8 @@
             color: #f1f5f9; /* text-slate-100 */
             /* Mencegah seleksi teks yang mengganggu */
             user-select: none;
+            /* Pastikan body tidak scroll saat layout utama aktif */
+            overflow-y: hidden; 
         }
 
         /* Gradient untuk judul */
@@ -41,6 +43,8 @@
             aspect-ratio: 1 / 1; /* Membuat kotak tetap persegi */
             color: #ffffff;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+            /* Ukuran font responsif untuk kotak kategori */
+            line-height: 1.2;
         }
         .question-box:hover {
             transform: scale(1.05) rotate(2deg);
@@ -51,6 +55,21 @@
             opacity: 0.7;
             transform: scale(0.95);
         }
+        .question-box.category-title {
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 700; /* font-bold */
+            color: #cbd5e1; /* text-slate-300 */
+            background-color: #1e293b; /* bg-slate-800 */
+            opacity: 1;
+            aspect-ratio: auto; /* Hapus rasio persegi */
+            min-height: 4rem; /* Tinggi minimal */
+        }
+        @media (min-width: 768px) { /* md: */
+            .question-box.category-title {
+                font-size: 1.125rem; /* text-lg */
+            }
+        }
+
 
         /* Warna kotak berdasarkan poin */
         .points-5 { background-color: #22c55e; } /* green-500 */
@@ -240,8 +259,6 @@
             Pilih Tim!
         </h1>
         
-        <!-- Input API Key SUDAH DIHAPUS -->
-
         <p class="my-6 text-slate-300">Pilih jumlah tim yang akan bermain:</p>
         <div class="flex justify-center gap-4">
             <button onclick="startGame(2)" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-bold text-lg shadow-lg transition duration-200">2 Tim</button>
@@ -251,33 +268,35 @@
     </div>
 
     <!-- --- Konten Game (Sembunyi Awalnya) --- -->
-    <div id="game-container" class="hidden">
+    <!-- Diperbarui untuk flexbox vertikal agar muat 1 layar -->
+    <div id="game-container" class="hidden flex flex-col min-h-[calc(100vh-4rem)] max-w-5xl mx-auto">
         <!-- Header -->
-        <header class="text-center mb-6">
-            <h1 class="text-4xl md:text-6xl font-black game-title mt-2">
+        <header class="text-center py-4"> <!-- Mengurangi padding/margin vertikal -->
+            <h1 class="text-4xl md:text-6xl font-black game-title">
                 Petualangan Gerak & Gaya
             </h1>
         </header>
 
         <!-- Papan Skor Tim -->
-        <div id="scoreboard-container" class="flex flex-wrap justify-center gap-4 mb-8">
+        <div id="scoreboard-container" class="flex flex-wrap justify-center gap-4 py-4"> <!-- Mengurangi padding/margin vertikal -->
             <!-- Papan skor akan dimasukkan oleh JS di sini -->
         </div>
 
         <!-- Papan Permainan -->
-        <main class="max-w-5xl mx-auto grid grid-cols-5 gap-3 md:gap-5">
+        <!-- flex-grow akan membuat bagian ini mengisi sisa ruang -->
+        <main class="flex-grow grid grid-cols-5 gap-3 md:gap-5 py-4">
             <!-- Kategori (hanya visual, tidak bisa diklik) -->
-            <div class="question-box bg-slate-700 !text-sm md:!text-lg !font-bold !text-slate-300 p-2 opacity-100">Konsep Gerak</div>
-            <div class="question-box bg-slate-700 !text-sm md:!text-lg !font-bold !text-slate-300 p-2 opacity-100">Hukum Newton</div>
-            <div class="question-box bg-slate-700 !text-sm md:!text-lg !font-bold !text-slate-300 p-2 opacity-100">Gaya Gesek</div>
-            <div class="question-box bg-slate-700 !text-sm md:!text-lg !font-bold !text-slate-300 p-2 opacity-100">Kecepatan & Percepatan</div>
-            <div class="question-box bg-slate-700 !text-sm md:!text-lg !font-bold !text-slate-300 p-2 opacity-100">Analisis (HOTS)</div>
+            <div class="question-box category-title">Konsep Gerak</div>
+            <div class="question-box category-title">Hukum Newton</div>
+            <div class="question-box category-title">Gaya Gesek</div>
+            <div class="question-box category-title">Kecepatan & Percepatan</div>
+            <div class="question-box category-title">Analisis (HOTS)</div>
 
             <!-- Pertanyaan akan dimasukkan oleh JS di sini -->
         </main>
         
         <!-- Tombol Reset -->
-        <footer class="text-center mt-8">
+        <footer class="text-center py-4"> <!-- Mengurangi padding/margin vertikal -->
             <button id="reset-button" onclick="showSetup()" class="px-6 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white font-bold shadow-lg transition duration-200">
                 Mulai Ulang
             </button>
@@ -333,8 +352,6 @@
             
             <!-- Footer Modal -->
             <div class="p-5 border-t border-slate-700 flex justify-end items-center">
-                <!-- Tombol Penjelasan AI SUDAH DIHAPUS -->
-                
                 <!-- Tombol Tutup -->
                 <button id="close-modal-button" onclick="closeModal()" class="px-5 py-2 bg-slate-600 hover:bg-slate-700 rounded-lg text-white font-semibold transition duration-200">
                     Tutup
@@ -708,12 +725,13 @@
             
             // Hapus papan skor lama dan kotak soal lama
             scoreboardContainer.innerHTML = '';
+            // Reset papan, tapi JANGAN hapus kategori
             board.innerHTML = `
-                <div class="question-box bg-slate-700 !text-sm md:!text-lg !font-bold !text-slate-300 p-2 opacity-100">Konsep Gerak</div>
-                <div class="question-box bg-slate-700 !text-sm md:!text-lg !font-bold !text-slate-300 p-2 opacity-100">Hukum Newton</div>
-                <div class="question-box bg-slate-700 !text-sm md:!text-lg !font-bold !text-slate-300 p-2 opacity-100">Gaya Gesek</div>
-                <div class="question-box bg-slate-700 !text-sm md:!text-lg !font-bold !text-slate-300 p-2 opacity-100">Kecepatan & Percepatan</div>
-                <div class="question-box bg-slate-700 !text-sm md:!text-lg !font-bold !text-slate-300 p-2 opacity-100">Analisis (HOTS)</div>
+                <div class="question-box category-title">Konsep Gerak</div>
+                <div class="question-box category-title">Hukum Newton</div>
+                <div class="question-box category-title">Gaya Gesek</div>
+                <div class="question-box category-title">Kecepatan & Percepatan</div>
+                <div class="question-box category-title">Analisis (HOTS)</div>
             `;
             
             // Tutup juga modal pertanyaan jika terbuka
@@ -732,7 +750,7 @@
             activeQuestions = shuffleQuestions();
             
             setupScreen.style.display = 'none';
-            gameContainer.style.display = 'block';
+            gameContainer.style.display = 'flex'; // Ubah ke flex
             finishModal.style.display = 'none';
             
             // Buat Papan Skor
@@ -745,6 +763,9 @@
                 clone.firstElementChild.dataset.teamId = i; // Simpan ID tim
                 scoreboardContainer.appendChild(clone);
             }
+            
+            // Hapus kotak soal lama (selain kategori)
+            board.querySelectorAll('.question-box:not(.category-title)').forEach(box => box.remove());
             
             // Buat Papan Pertanyaan
             activeQuestions.forEach((q, index) => {
@@ -779,7 +800,8 @@
             
             // Reset modal
             modalPoints.textContent = `Soal ${question.points} Poin`;
-            modalPoints.className = `text-3xl font-black text-center points-${question.points}`; // Ganti warna header
+            // Ganti warna header
+            modalPoints.className = `text-3xl font-black text-center text-${question.points === 5 ? 'green' : question.points === 10 ? 'blue' : question.points === 15 ? 'yellow' : 'pink'}-400`;
             modalQuestionText.innerHTML = question.question; // Pakai innerHTML agar span terbaca
             feedbackText.style.display = 'none';
             // Sembunyikan penjelasan
