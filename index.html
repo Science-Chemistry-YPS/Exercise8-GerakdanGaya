@@ -18,8 +18,7 @@
             color: #f1f5f9; /* text-slate-100 */
             /* Mencegah seleksi teks yang mengganggu */
             user-select: none;
-            /* Pastikan body tidak scroll saat layout utama aktif */
-            overflow-y: hidden; 
+            /* Hapus overflow-y: hidden; agar bisa di-scroll jika perlu */
         }
 
         /* Gradient untuk judul */
@@ -36,14 +35,15 @@
             cursor: pointer;
             border-radius: 0.75rem; /* rounded-xl */
             font-weight: 900; /* font-black */
-            font-size: 1.875rem; /* text-3xl */
+            /* Ukuran font dikecilkan sedikit */
+            font-size: 1.5rem; /* text-2xl */
             display: flex;
             justify-content: center;
             align-items: center;
-            aspect-ratio: 1 / 1; /* Membuat kotak tetap persegi */
+            /* Rasio aspek diubah agar sedikit lebih pendek */
+            aspect-ratio: 4 / 3; 
             color: #ffffff;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
-            /* Ukuran font responsif untuk kotak kategori */
             line-height: 1.2;
         }
         .question-box:hover {
@@ -62,11 +62,15 @@
             background-color: #1e293b; /* bg-slate-800 */
             opacity: 1;
             aspect-ratio: auto; /* Hapus rasio persegi */
-            min-height: 4rem; /* Tinggi minimal */
+            min-height: 3rem; /* Tinggi minimal dikurangi */
+            padding: 0.5rem;
         }
         @media (min-width: 768px) { /* md: */
             .question-box.category-title {
-                font-size: 1.125rem; /* text-lg */
+                font-size: 1rem; /* text-base */
+            }
+            .question-box {
+                 font-size: 1.875rem; /* text-3xl */
             }
         }
 
@@ -80,13 +84,13 @@
         /* Status jawaban di kotak */
         .answered-true {
             background-color: #16a34a; /* green-600 */
-            font-size: 1.25rem; /* text-xl */
+            font-size: 1.125rem; /* text-lg */
             line-height: 1.5rem;
             text-shadow: none;
         }
         .answered-false {
             background-color: #dc2626; /* red-600 */
-            font-size: 1.25rem; /* text-xl */
+            font-size: 1.125rem; /* text-lg */
             line-height: 1.5rem;
             text-shadow: none;
         }
@@ -95,11 +99,27 @@
         .score-card {
             transition: all 0.3s ease;
             border: 4px solid transparent;
+            padding: 0.5rem; /* Dikecilkan */
         }
         .score-card.active-turn {
             transform: scale(1.05);
             border-color: #fde047; /* yellow-300 */
             box-shadow: 0 0 20px #fde047;
+        }
+        /* Ukuran font skor dikecilkan */
+        .score-card h2 {
+            font-size: 1rem; /* text-base */
+        }
+         .score-card p {
+            font-size: 1.875rem; /* text-3xl */
+        }
+         @media (min-width: 768px) { /* md: */
+            .score-card h2 {
+                font-size: 1.125rem; /* text-lg */
+            }
+             .score-card p {
+                font-size: 2.25rem; /* text-4xl */
+            }
         }
         
         /* Modal (Popup) */
@@ -241,7 +261,7 @@
 
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-2 md:p-4"> <!-- Padding dikecilkan -->
 
     <!-- --- Wadah untuk Konfeti Mini --- -->
     <div id="mini-confetti-container"></div>
@@ -268,23 +288,24 @@
     </div>
 
     <!-- --- Konten Game (Sembunyi Awalnya) --- -->
-    <!-- Diperbarui untuk flexbox vertikal agar muat 1 layar -->
-    <div id="game-container" class="hidden flex flex-col min-h-[calc(100vh-4rem)] max-w-5xl mx-auto">
+    <!-- min-h-screen diubah agar lebih fleksibel, padding dikurangi -->
+    <div id="game-container" class="hidden flex flex-col min-h-[calc(100vh-2rem)] max-w-5xl mx-auto">
         <!-- Header -->
-        <header class="text-center py-4"> <!-- Mengurangi padding/margin vertikal -->
-            <h1 class="text-4xl md:text-6xl font-black game-title">
+        <header class="text-center py-2"> <!-- Padding/margin vertikal dikurangi -->
+            <!-- Ukuran font judul dikecilkan -->
+            <h1 class="text-3xl md:text-5xl font-black game-title">
                 Petualangan Gerak & Gaya
             </h1>
         </header>
 
         <!-- Papan Skor Tim -->
-        <div id="scoreboard-container" class="flex flex-wrap justify-center gap-4 py-4"> <!-- Mengurangi padding/margin vertikal -->
+        <div id="scoreboard-container" class="flex flex-wrap justify-center gap-2 md:gap-4 py-2"> <!-- Padding/margin vertikal dan gap dikurangi -->
             <!-- Papan skor akan dimasukkan oleh JS di sini -->
         </div>
 
         <!-- Papan Permainan -->
-        <!-- flex-grow akan membuat bagian ini mengisi sisa ruang -->
-        <main class="flex-grow grid grid-cols-5 gap-3 md:gap-5 py-4">
+        <!-- flex-grow akan membuat bagian ini mengisi sisa ruang. Gap dikurangi -->
+        <main class="flex-grow grid grid-cols-5 gap-2 md:gap-3 py-2"> 
             <!-- Kategori (hanya visual, tidak bisa diklik) -->
             <div class="question-box category-title">Konsep Gerak</div>
             <div class="question-box category-title">Hukum Newton</div>
@@ -296,7 +317,7 @@
         </main>
         
         <!-- Tombol Reset -->
-        <footer class="text-center py-4"> <!-- Mengurangi padding/margin vertikal -->
+        <footer class="text-center py-2"> <!-- Padding/margin vertikal dikurangi -->
             <button id="reset-button" onclick="showSetup()" class="px-6 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white font-bold shadow-lg transition duration-200">
                 Mulai Ulang
             </button>
@@ -305,9 +326,10 @@
     
     <!-- --- Template Papan Skor (untuk di-clone JS) --- -->
     <template id="score-card-template">
-        <div class="score-card w-36 md:w-48 p-4 bg-slate-800 rounded-lg shadow-lg text-center">
-            <h2 class="text-lg md:text-xl font-bold text-yellow-300 uppercase">Tim 1</h2>
-            <p class="text-3xl md:text-5xl font-black text-white">0</p>
+        <!-- Ukuran dikecilkan -->
+        <div class="score-card w-32 md:w-44 p-2 bg-slate-800 rounded-lg shadow-lg text-center">
+            <h2 class="text-base md:text-lg font-bold text-yellow-300 uppercase">Tim 1</h2>
+            <p class="text-2xl md:text-4xl font-black text-white">0</p>
         </div>
     </template>
 
