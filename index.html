@@ -569,10 +569,31 @@
                 question: "Grafik (v-t) di atas menunjukkan gerak sebuah benda. Berapa <span class='text-red-300'>jarak tempuh</span> benda selama 6 detik?",
                 options: ["60 meter", "10 meter", "1.67 meter", "600 meter"],
                 answer: "60 meter",
-                explanation: "Pada grafik v-t, <b>Jarak = Luas di bawah grafik</b>. Grafiknya berbentuk persegi panjang. Luas = panjang x lebar = 6 detik x 10 m/s = 60 meter."
+                explanation: "Pada grafik (v-t), <b>Jarak = Luas di bawah grafik</b>. Grafiknya berbentuk persegi panjang. Luas = panjang x lebar = 6 detik x 10 m/s = 60 meter."
             }
         ];
+
+        // -----------------------------------------------------------------
+        // --- FUNGSI UTILITAS (Termasuk Shuffle) --------------------------
+        // -----------------------------------------------------------------
         
+        /**
+         * Mengacak urutan array menggunakan algoritma Fisher-Yates.
+         * @param {Array} array Array yang ingin diacak.
+         * @returns {Array} Array baru dengan urutan acak.
+         */
+        function shuffleArray(array) {
+            // Buat salinan array agar tidak mengubah data aslinya
+            let newArray = [...array]; 
+            for (let i = newArray.length - 1; i > 0; i--) {
+                // Ambil indeks acak dari 0 sampai i
+                const j = Math.floor(Math.random() * (i + 1));
+                // Tukar elemen
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
         // Mengacak urutan soal dalam setiap kategori poin
         function shuffleQuestions() {
             const shuffled = [];
@@ -839,9 +860,13 @@
                 modalImageContainer.style.display = 'none';
             }
             
+            // *** PERUBAHAN: Acak Pilihan Jawaban ***
+            const shuffledOptions = shuffleArray(question.options);
+            
             // Buat tombol pilihan
             modalOptionsContainer.innerHTML = '';
-            question.options.forEach(option => {
+            // Gunakan 'shuffledOptions' alih-alih 'question.options'
+            shuffledOptions.forEach(option => {
                 const button = document.createElement('button');
                 button.classList.add('option-button', 'w-full', 'p-4', 'bg-slate-900', 'rounded-lg', 'text-slate-100', 'font-semibold', 'text-left');
                 button.innerHTML = option; // Pakai innerHTML jika ada format khusus
@@ -870,6 +895,7 @@
             // Matikan semua tombol pilihan
             modalOptionsContainer.querySelectorAll('button').forEach(btn => {
                 btn.disabled = true;
+                // Logika ini tetap aman karena membandingkan teks di dalam tombol
                 if (btn.innerHTML === currentQuestion.answer) {
                     btn.classList.add('!bg-green-600', '!border-green-500'); // Tampilkan jawaban benar
                 } else if (btn.innerHTML === selectedOption) {
